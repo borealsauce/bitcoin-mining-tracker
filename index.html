@@ -167,7 +167,7 @@ function calc(){
  <b>Live inputs:</b> BTC ${$(L.price,0)} (${ts(L.price_t)})${+iB.value?' — <b>overridden to '+$(P,0)+'</b>':''} · difficulty ${(L.diff/1e12).toFixed(2)}T (last adj. ${ts(L.diff_t)}) · network ${N(L.net_hash_ehs,0)} EH/s · subsidy ${L.subsidy} BTC + avg fees ${L.fee_blk.toFixed(4)} BTC/block (${L.fee_range}). Built ${ts(L.built)}.<br>
  <b>Assumptions:</b> ${N(up*100,1)}% uptime${Math.abs(up*100-D.uptime)<1e-9?' (host-stated avg)':''}; electricity scales with uptime (powered-off miners draw no power), ${N(pf*100,1)}% pool fee (FPPS-style expected value, no luck variance), $${k}/kWh, power at spec wall draw, 30.44-day month, start date ${D.start}, purchase ${$(cost,0)}/miner (${$(capex,0)} total).<br>
  <b>History is an ESTIMATE</b> from daily network data, not pool payouts: each day = fleet hashrate ÷ (that day's difficulty × 2³²) × 86,400 × that day's average block reward (subsidy + fees) × (1 − pool fee), valued at that day's BTC price. Share your pool account or payout history to swap in actuals.`;
- document.getElementById('hp').innerHTML='<div style="font:700 30px Oswald;color:var(--gold)">BTC '+$(L.price,0)+'</div><div class="muted">as of '+ts(L.price_t)+'</div>';
+ document.getElementById('hp').innerHTML='<div class="shim" style="font:700 34px Oswald">BTC '+$(L.price,0)+'</div><div class="muted">as of '+ts(L.price_t)+'</div>';
  document.getElementById('sub').textContent=n+' × '+S.model+' · since '+SD+' · updated '+ts(L.built);}
 (async()=>{D=await (await fetch('data.json',{cache:'no-store'})).json();
  document.getElementById('app').style.display='';iN.value=D.n;iK.value=D.kwh;iU.value=D.uptime;iP.value=D.pool;iC.value=D.cost;
