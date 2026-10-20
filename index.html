@@ -71,8 +71,7 @@ tr.cur td{background:#e8b92326!important;font-weight:700}
 <h2>Live Projection (current difficulty)</h2><div class="cards" id="live"></div>
 <div class="grid2"><div><h2>Monthly Income &amp; BTC Price <span class="est">EST.</span></h2><div class="chartbox" id="c1"></div></div>
 <div><h2>Cumulative BTC Mined <span class="est">EST.</span></h2><div class="chartbox" id="c2"></div></div></div>
-<h2>Payback at Current BTC Price</h2><div class="cards" id="pbc"></div><div class="chartbox" style="margin-top:12px" id="c4"></div>
-<h2>Payback Scenarios</h2><div class="cards" id="pbs"></div><div class="chartbox" style="margin-top:12px" id="c5"></div><div class="small" style="margin-top:6px">Difficulty and fees held flat at the current level; electricity, uptime and pool fee as set above. Projected from the current estimated cumulative net. Next halving (block 1,050,000, ~10 min/block) cuts the 3.125 BTC subsidy to 1.5625; fees held flat. If mining loses money after the halving, miners are assumed switched off (no further cost). Capped at 10 years.</div>
+<h2>Payback Scenarios</h2><div class="cards" id="pbs"></div><div class="chartbox" style="margin-top:12px" id="c5"></div><div class="small" style="margin-top:6px"><b id="hvn"></b> Difficulty and fees held flat at the current level; electricity, uptime and pool fee as set above. Projected from the current estimated cumulative net. Next halving (block 1,050,000, ~10 min/block) cuts the 3.125 BTC subsidy to 1.5625; fees held flat. If mining loses money after the halving, miners are assumed switched off (no further cost). Capped at 10 years.</div>
 <h2>Monthly History <span class="est">ESTIMATE</span></h2><div class="scroll" id="tHist"></div>
 <h2>Monthly Electricity Cost</h2><div class="scroll" id="tEl"></div>
 <h2>Assumptions</h2><div class="small" id="asm"></div><br></div>
@@ -156,8 +155,7 @@ function calc(){
  const pbSub=r=>r==null?'':N(r,1)+' mo from today · '+(r<=hvM?'before halving':'after halving');
  const cur=sim(P,netMined,capex),rC=cur.pb;
  const hp=[[0,0]];{let a=0;hist.forEach(h=>{a+=h.days/30.44;hp.push([a,h.cn])})};hp[hp.length-1]=[elapsed,netMined];
- lines('c4',[{n:'Cumulative net (est. actual)',c:'#22c55e',pts:hp},{n:'Projected at '+$(P,0)+' (halving-aware)',c:'#60a5fa',dash:1,pts:cur.pts.map(p=>[elapsed+p[0],p[1]]),pb:rC!=null?elapsed+rC:null}],capex,t0,elapsed+hvM,'Halving (~'+fdt(hvD)+')');
- document.getElementById('pbc').innerHTML=card('Payback Date',pbTxt(rC),rC==null?'difficulty flat, halving ~'+fdt(hvD):pbSub(rC),rC!=null?'pos':'neg')+card('Months Remaining',rC!=null?N(rC,1):'—','from today')+card('Total Months from Inception',rC!=null?N(elapsed+rC,1):'—','since '+SD)+card('Next Halving','~'+fdt(hvD),'block 1,050,000 · '+N(1050000-L.tip)+' blocks left · subsidy 3.125→1.5625');
+ document.getElementById('hvn').textContent='Next halving ~'+fdt(hvD)+' (block 1,050,000, '+N(1050000-L.tip)+' blocks left).';
  const sc=[[-20000,'#ff2d3a'],[0,'#60a5fa'],[20000,'#22c55e'],[40000,'#e8b923'],[60000,'#f97316'],[80000,'#a855f7'],[100000,'#ec4899'],[120000,'#14b8a6'],[140000,'#f5f5f5']].map(([d,c])=>{const px=P+d,s=sim(px,netMined,capex);return {px,atH:(s.pts.find(p=>p[0]>=hvM)||s.pts[s.pts.length-1])[1],r:s.pb,pts:s.pts,pb:s.pb,c,n:(d?(d>0?'+':'−')+'$'+Math.abs(d/1000)+'K ':'Current ')+'('+$(px,0)+')'}});
  lines('c5',sc,capex,today,hvM,'Halving (~'+fdt(hvD)+')');
  document.getElementById('pbs').innerHTML=sc.map(s=>card('<span class="dot" style="background:'+s.c+'"></span>BTC '+$(s.px,0),pbTxt(s.r),s.r!=null?pbSub(s.r)+(s.r>hvM?' · '+$(s.atH,0)+' net at halving':''):(fb*s.px<el?'below breakeven '+$(beP,0):'reaches '+$(s.atH,0)+' by halving; '+(fb*hvF*s.px<el?'miners switched off after (post-halving breakeven '+$(beP/hvF,0)+')':'only '+$((fb*hvF*s.px-el)*30.44,0)+'/mo after')),s.r!=null?'':'neg')).join('');
