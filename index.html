@@ -1,0 +1,217 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><link rel="icon" href="data:,"><title>Bitcoin Mining Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--line:#262626;--gold:#e8b923;--txt:#f5f5f5;--muted:#a3a3a3;--red:#ff2d3a;--green:#22c55e;--surf:#141414;--surf2:#1c1c1c;--gb:#e8b92347}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 500px at 50% -200px,#e8b9231a,transparent),var(--bg);color:var(--txt);font:14px Inter,system-ui,sans-serif}
+h1,h2{font-family:Oswald,sans-serif;margin:0;color:var(--gold);text-transform:uppercase}h1{letter-spacing:.08em}
+h2{font-size:18px;margin:28px 0 10px;letter-spacing:.1em;font-weight:600;border-left:3px solid var(--gold);padding-left:10px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+.top{background:linear-gradient(180deg,#0c0c0c,#050505);border-bottom:1px solid var(--gb);box-shadow:0 12px 40px #0000008c;position:relative;padding:18px 0}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,#e8b923,transparent)}
+.muted{color:var(--muted);font-size:12px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.pill{background:var(--surf2);color:#d4d4d4;border:1px solid var(--line);border-radius:999px;padding:7px 16px;font:600 13px Inter,system-ui;cursor:pointer;transition:all .15s}
+.pill:hover{border-color:var(--gold);box-shadow:0 0 18px #e8b92355;transform:translateY(-1px)}
+.pill.on{background:linear-gradient(180deg,#f5c518,#e8b923);color:#050505;border-color:#e8b923;box-shadow:0 0 18px #e8b923d9,0 4px 12px #00000080}
+@media(max-width:600px){.pill{padding:6px 12px;font-size:12px}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card,.chartbox,#gate form{background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid var(--gb);border-radius:1rem;padding:14px;transition:transform .2s,box-shadow .2s}
+.card:hover,.chartbox:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 14px 36px #00000073,0 0 0 1px #e8b923}
+.card .l{font:700 11px Inter;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.card .v{font:700 26px Oswald;margin-top:4px}.card.hero .v{font-size:34px}
+.card .s{font-size:12px;color:var(--muted);margin-top:4px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;background:var(--surf);border:1px solid var(--gb);border-radius:1rem;overflow:hidden;color:var(--txt)}
+th,td{padding:7px 10px;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}
+th{background:#0c0c0c;color:var(--gold);text-transform:uppercase;font:600 11px Inter;letter-spacing:.12em;border-bottom:1px solid var(--gold)}
+td{border-bottom:1px solid #202020}tr:nth-child(even) td{background:#0c0c0c66}tr:hover td{background:#e8b92314}tr.ft td{font-weight:700;background:#0c0c0c;border-top:1px solid var(--gb)}
+tr.dim td{color:var(--muted)}th.t,td.t{text-align:left!important}
+.scroll{overflow-x:auto}.neg{color:var(--red)!important}.pos{color:var(--green)!important}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.chartbox svg{width:100%;height:auto;display:block}.chartbox text{fill:#a3a3a3;font:11px Inter}
+.lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;vertical-align:middle}
+#gate{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:9}
+#gate form{padding:28px;text-align:center}
+#gate input{font:18px Inter;padding:8px 12px;border:1px solid var(--gb);border-radius:8px;width:180px;text-align:center;background:#0c0c0c;color:var(--txt)}
+#gate button{margin-left:6px;font:700 15px Inter;padding:9px 16px;border:0;border-radius:999px;background:var(--gold);color:#050505;cursor:pointer}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.fx-in{opacity:0;animation:up .6s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes shim{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.shim{background:linear-gradient(90deg,#f5c518 0%,#fff3b0 45%,#e8b923 55%,#f5c518 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shim 3.5s linear infinite}
+.shim.neg{background:none;-webkit-text-fill-color:var(--red);animation:none}
+.bar{height:6px;background:#262626;border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;border-radius:9px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.chartbox rect{transition:y .9s cubic-bezier(.2,.8,.2,1),height .9s cubic-bezier(.2,.8,.2,1)}
+@media(prefers-reduced-motion:reduce){.fx-in{animation:none;opacity:1}.shim{animation:none}.bar i,.chartbox rect{transition:none}.card:hover,.chartbox:hover,.pill:hover{transform:none}}
+
+tr.cur td{background:#e8b92326!important;font-weight:700}
+.info{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:13px;margin:2px 0 14px}.info b{color:var(--txt);font-weight:600}
+.card .v.sm{font-size:20px}
+.inp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0}
+.inp label{font:600 11px Inter;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:block}
+.inp input{width:100%;margin-top:4px;font:15px Inter;padding:7px 9px;background:#0c0c0c;color:var(--txt);border:1px solid var(--gb);border-radius:8px}
+.est{display:inline-block;background:#e8b92322;color:var(--gold);border:1px solid var(--gb);border-radius:999px;padding:2px 9px;font:700 10px Inter;letter-spacing:.1em;margin-left:8px;vertical-align:middle}
+.cards.top3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.small{font-size:12px;color:var(--muted);line-height:1.6}.small a{color:var(--gold)}
+@media(max-width:600px){.card .v{font-size:22px}.card.hero .v{font-size:28px}th,td{padding:6px 7px;font-size:12px}}
+</style></head><body>
+<div id="gate"><form onsubmit="go(event)"><h1>Bitcoin Mining Tracker</h1><p class="muted">Enter password</p><input id="pw" type="password" autofocus><button>Open</button><div id="err" class="neg"></div></form></div>
+<div class="top"><div class="wrap"><h1>Bitcoin Mining Tracker</h1><div class="muted" id="sub"></div></div></div>
+<div class="wrap" id="app" style="display:none">
+<div class="cards top3" id="top" style="margin-top:16px"></div>
+<h2>Since Inception <span class="est">ESTIMATE</span></h2><div class="cards" id="inc"></div>
+<h2>Equipment Value &amp; Net Position</h2><div class="cards" id="eqc"></div><div class="small" id="eqsrc" style="margin-top:8px"></div>
+<h2>Inputs</h2><div class="inp">
+<div><label>Miners</label><input id="iN" type="number" min="0" step="1"></div>
+<div><label>$ / kWh</label><input id="iK" type="number" step="0.005"></div>
+<div><label>Uptime %</label><input id="iU" type="number" min="0" max="100" step="1"></div>
+<div><label>Pool fee %</label><input id="iP" type="number" min="0" step="0.5"></div>
+<div><label>BTC price override</label><input id="iB" type="number" placeholder="live"></div>
+<div><label>Cost per miner $</label><input id="iC" type="number" step="50"></div></div>
+<h2>Live Projection (current difficulty)</h2><div class="cards" id="live"></div>
+<h2>Per Miner</h2><div class="scroll" id="tMin"></div>
+<div class="grid2"><div><h2>Monthly Income &amp; BTC Price <span class="est">EST.</span></h2><div class="chartbox" id="c1"></div></div>
+<div><h2>Cumulative BTC Mined <span class="est">EST.</span></h2><div class="chartbox" id="c2"></div></div></div>
+<h2>Monthly History <span class="est">ESTIMATE</span></h2><div class="scroll" id="tHist"></div>
+<h2>Monthly Electricity Cost</h2><div class="chartbox" id="c3"></div><div class="scroll" style="margin-top:12px" id="tEl"></div>
+<h2>Assumptions &amp; Sources</h2><div class="small" id="asm"></div><br></div>
+<script>
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function decrypt(pw){const e=await (await fetch('data.enc.json',{cache:'no-store'})).json();
+ const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+ const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.salt),iterations:e.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+ return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.iv)},key,b64(e.ct))));}
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const $=(v,d=2)=>v==null||!isFinite(v)?'—':(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const B=(v,d=6)=>v==null||!isFinite(v)?'—':v.toFixed(d)+' BTC';const N=(v,d=0)=>isFinite(v)?v.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
+const cls=v=>v<0?'neg':v>0?'pos':'';const ts=t=>new Date(t*1000).toLocaleString('en-US',{timeZone:'America/Los_Angeles',dateStyle:'medium',timeStyle:'short'})+' PT';
+const mlab=m=>MO[+m.slice(5)-1]+' '+m.slice(2,4);
+let D;const card=(l,v,s,c='',h='')=>`<div class="card ${h}"><div class="l">${l}</div><div class="v ${c}">${v}</div><div class="s">${s||''}</div></div>`;
+function tbl(id,head,rows,foot){document.getElementById(id).innerHTML='<table><thead><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td data-v="${c.d??''}" class="${c.c||''}">${c.v}</td>`).join('')+'</tr>').join('')+'</tbody>'+(foot?'<tfoot><tr class="ft">'+foot.map(c=>'<td>'+c+'</td>').join('')+'</tr></tfoot>':'')+'</table>';}
+const C=(v,f)=>({v:f(v),d:v,c:''});const CS=(v,f)=>({v:f(v),d:v,c:cls(v)});
+function bars(id,lab,series,line,opt={}){ // series:[{n,c,v[]}], line:{n,c,v[]}
+ const W=640,H=300,L=58,R=line?58:14,T=16,Bm=44,pw=W-L-R,ph=H-T-Bm,n=lab.length;
+ const all=series.flatMap(s=>s.v);let mx=Math.max(0,...all),mn=Math.min(0,...all);if(mx==mn)mx=1;
+ const y=v=>T+ph*(mx-v)/(mx-mn);let g='';
+ for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#262626"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${opt.fy?opt.fy(v):'$'+Math.round(v).toLocaleString()}</text>`}
+ const bw=pw/n,sw=bw*.78/series.length;
+ lab.forEach((l,i)=>{series.forEach((s,j)=>{const v=s.v[i],x=L+i*bw+bw*.11+j*sw;g+=`<rect x="${x}" y="${Math.min(y(v),y(0))}" width="${sw-1}" height="${Math.abs(y(v)-y(0))}" fill="${v<0?'#ff2d3a':s.c}" rx="2"><title>${l} ${s.n}: ${opt.fy?opt.fy(v):$(v)}</title></rect>`});
+  if(n<=16||i%2==0)g+=`<text x="${L+i*bw+bw/2}" y="${H-Bm+16}" text-anchor="middle">${l}</text>`});
+ if(line){const lm=Math.max(...line.v)*1.05,ln=Math.min(...line.v)*.95,yl=v=>T+ph*(lm-v)/(lm-ln);
+  g+=`<polyline fill="none" stroke="${line.c}" stroke-width="2.5" points="${line.v.map((v,i)=>(L+i*bw+bw/2)+','+yl(v)).join(' ')}"/>`;
+  line.v.forEach((v,i)=>g+=`<circle cx="${L+i*bw+bw/2}" cy="${yl(v)}" r="3" fill="${line.c}"><title>${lab[i]} ${line.n}: ${$(v,0)}</title></circle>`);
+  for(let i=0;i<=4;i++){const v=ln+(lm-ln)*i/4;g+=`<text x="${W-R+6}" y="${yl(v)+4}">$${(v/1000).toFixed(0)}K</text>`}}
+ let lg=series.concat(line?[line]:[]).map(s=>`<span class="lg" style="background:${s.c}"></span><span class="muted">${s.n}</span>`).join('');
+ document.getElementById(id).innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg><div style="margin-top:6px">${lg}</div>`;}
+function calc(){
+ const S=D.spec,L=D.live,n=+iN.value||0,k=+iK.value||0,up=(+iU.value||0)/100,pf=(+iP.value||0)/100,P=+iB.value||L.price,cost=+iC.value||0;
+ const per=(diff,rew)=>S.th*1e12*86400*up/(diff*2**32)*rew*(1-pf); // BTC/day per miner
+ const kwhDay=S.w/1000*24*up,eDay=kwhDay*k;
+ // history
+ const mon={};D.days.forEach(x=>{const m=x.d.slice(0,7),o=mon[m]=mon[m]||{btc:0,usd:0,kwh:0,px:[],days:0};const b=per(x.diff,x.rew)*n;o.btc+=b;o.usd+=b*x.usd;o.kwh+=kwhDay*n;o.px.push(x.usd);o.days++});
+ const ms=Object.keys(mon).sort();let cb=0,cu=0,ce=0,ck=0;const hist=ms.map(m=>{const o=mon[m],e=o.kwh*k;cb+=o.btc;cu+=o.usd;ce+=e;ck+=o.kwh;return {m,...o,e,net:o.usd-e,avg:o.px.reduce((a,b)=>a+b,0)/o.px.length,cb,cu,ce,ck,cn:cu-ce}});
+ const capex=n*cost,totNow=cb*P,netNow=totNow-ce,netMined=cu-ce;
+ // live
+ const rew=L.subsidy+L.fee_blk,bd=per(L.diff,rew),fb=bd*n,rev=fb*P,el=eDay*n,net=rev-el;
+ const beP=fb>0?el/fb:null,beK=kwhDay*n>0?rev/(kwhDay*n):null,pay=net>0&&cost?capex/(net*30.44):null,remain=net>0?(capex-netMined)/(net*30.44):null;
+ const E=D.eq,newP=E.new[0].p,usedP=E.used_sold_avg.p,us=E.used.map(x=>x.p).sort((a,b)=>a-b),med=us.length%2?us[(us.length-1)/2]:(us[us.length/2-1]+us[us.length/2])/2;
+ document.getElementById('top').innerHTML=card('Total BTC Mined — at Current Price',$(totNow),B(cb,5)+' since 9/1/2025 × '+$(P,0)+' <span class="est">EST.</span>','shim','hero')+
+  card('Total Electricity Cost Since Inception',$(ce),N(ck)+' kWh × $'+k.toFixed(3)+'/kWh','neg','hero')+card('Current Total Income (Net)',$(netNow),'BTC at today\'s price − electricity',cls(netNow),'hero');
+ document.getElementById('inc').innerHTML=card('Estimated BTC Mined Since Sept 2025',B(cb,5),'worth '+$(totNow)+' today')+card('Value at Mined-Date Prices',$(cu),'sum of daily BTC × that day\'s price')+
+  card('Cumulative Net Profit (mined-date)',$(netMined),'revenue at mined-date prices − electricity',cls(netMined))+card('Capital Recovered',capex?N(netMined/capex*100,1)+'%':'—',$(netMined)+' of '+$(capex,0))+
+  card('Months to Full Payback',remain!=null&&remain>0?N(remain,1)+' mo':remain!=null?'Paid back':'Never at current rates','remaining '+$(Math.max(capex-netMined,0),0)+' ÷ current monthly net');
+ const fleetNew=n*newP,fleetUsed=n*usedP,dep=fleetUsed-capex,pos=netMined+fleetUsed-capex;
+ document.getElementById('eqc').innerHTML=card('Original Cost',$(capex,0),n+' × '+$(cost,0))+card('New Price Today (per miner)',$(newP,2),'fleet '+$(fleetNew,0)+' ('+N((fleetNew/capex-1)*100,1)+'%)')+
+  card('Used Market (per miner)',$(usedP,2),'median ask '+$(med,0)+', range '+$(us[0],0)+'–'+$(us[us.length-1],0)+' ('+us.length+' listings)')+
+  card('Fleet Value (Used)',$(fleetUsed,0),'depreciation '+$(dep,0)+' ('+N(dep/capex*100,1)+'%)',cls(dep))+card('Net Position',$(pos,0),'cum. net mining profit + used fleet value − '+$(capex,0),cls(pos));
+ document.getElementById('eqsrc').innerHTML='New: '+E.new.map(x=>`<a href="${x.u}" target="_blank">${x.src}</a> ${$(x.p)}`).join(' · ')+'<br>Used: <a href="'+E.used_sold_avg.u+'" target="_blank">'+E.used_sold_avg.src+'</a> '+$(usedP)+' · listings: '+E.used.map(x=>`<a href="${x.u}" target="_blank">${x.src}</a> ${$(x.p,0)}`).join(', ')+'<br>'+E.note+' Prices as of '+E.asof+'.';
+ document.getElementById('live').innerHTML=card('Fleet Hashrate',N(n*S.th)+' TH/s',N(n*S.th/1000,2)+' PH/s')+card('Fleet Power',N(n*S.w/1000,2)+' kW',N(kwhDay*n)+' kWh/day')+
+  card('BTC / Day',B(fb,6),'Month '+B(fb*30.44,5)+' · Year '+B(fb*365,4))+card('Revenue',$(rev)+'/day',$(rev*30.44)+'/mo · '+$(rev*365,0)+'/yr')+
+  card('Electricity',$(el)+'/day',$(el*30.44)+'/mo · '+$(el*365,0)+'/yr','neg')+card('Net Profit',$(net)+'/day',$(net*30.44)+'/mo · '+$(net*365,0)+'/yr',cls(net))+
+  card('Profit per Miner',$(n?net/n:0)+'/day',$(n?net/n*30.44:0)+'/mo · '+$(n?net/n*365:0,0)+'/yr',cls(net))+card('Breakeven BTC Price',$(beP,0),'price where revenue = power')+
+  card('Breakeven Electricity',beK?'$'+beK.toFixed(4)+'/kWh':'—','rate where profit = 0')+card('Payback from Scratch',pay?N(pay,1)+' mo':'—','at current net, '+$(cost,0)+'/miner <span class="est">EDITABLE</span>');
+ const rows=[];for(let i=1;i<=n;i++)rows.push([{v:'S21 XP #'+i,d:i},C(S.th,v=>N(v)),C(S.w,v=>N(v)),C(bd,v=>v.toFixed(8)),C(bd*P,$),C(eDay,$),CS(bd*P-eDay,$),CS((bd*P-eDay)*30.44,$),CS((bd*P-eDay)*365,$),C(cost,v=>$(v,0)),C(net>0?cost/((bd*P-eDay)*30.44):null,v=>v?N(v,1):'—')]);
+ tbl('tMin',['Miner','TH/s','Watts','BTC/Day','Rev/Day','Power/Day','Net/Day','Net/Mo','Net/Yr','Cost','Payback Mo'],rows);
+ tbl('tHist',['Month','Days','Avg BTC Price','BTC Mined','Revenue','Electricity','Net','Cum BTC','Cum Value (Mined Price)','Cum Value (Today)','Cum Electricity','Cum Net','Capital Recovered'],
+  hist.map(h=>[{v:mlab(h.m),d:h.m},C(h.days,N),C(h.avg,v=>$(v,0)),C(h.btc,v=>v.toFixed(6)),C(h.usd,$),C(h.e,$),CS(h.net,$),C(h.cb,v=>v.toFixed(6)),C(h.cu,$),C(h.cb*P,$),C(h.ce,$),CS(h.cn,$),C(capex?h.cn/capex*100:0,v=>N(v,1)+'%')]),
+  ['TOTAL',N(hist.reduce((a,h)=>a+h.days,0)),'',cb.toFixed(6),$(cu),$(ce),$(netMined),cb.toFixed(6),$(cu),$(totNow),$(ce),$(netMined),capex?N(netMined/capex*100,1)+'%':'']);
+ let c2=0;tbl('tEl',['Month','Days','kWh','Cost','Cumulative Cost'],hist.map(h=>(c2+=h.e,[{v:mlab(h.m),d:h.m},C(h.days,N),C(h.kwh,N),C(h.e,$),C(c2,$)])),['TOTAL',N(hist.reduce((a,h)=>a+h.days,0)),N(ck),$(ce),$(ce)]);
+ const lab=hist.map(h=>mlab(h.m));
+ bars('c1',lab,[{n:'Revenue',c:'#e8b923',v:hist.map(h=>h.usd)},{n:'Net after power',c:'#22c55e',v:hist.map(h=>h.net)}],{n:'Avg BTC price',c:'#60a5fa',v:hist.map(h=>h.avg)});
+ bars('c2',lab,[{n:'Cumulative BTC',c:'#f97316',v:hist.map(h=>h.cb)}],null,{fy:v=>v.toFixed(2)});
+ bars('c3',lab,[{n:'Electricity cost',c:'#ff2d3a',v:hist.map(h=>h.e)}]);
+ document.getElementById('asm').innerHTML=`<b>Miner:</b> ${S.model}, ${S.th} TH/s, ${N(S.w)} W, ${S.jth} J/TH. Source: ${S.src}.<br>
+ <b>Live inputs:</b> BTC ${$(L.price,0)} (mempool.space, ${ts(L.price_t)}; CoinGecko ${$(L.price_cg,0)})${+iB.value?' — <b>overridden to '+$(P,0)+'</b>':''} · difficulty ${(L.diff/1e12).toFixed(2)}T (last adj. ${ts(L.diff_t)}) · network ${N(L.net_hash_ehs,0)} EH/s · subsidy ${L.subsidy} BTC + avg fees ${L.fee_blk.toFixed(4)} BTC/block (${L.fee_range}). Built ${ts(L.built)}.<br>
+ <b>Assumptions:</b> ${N(up*100)}% uptime, ${N(pf*100,1)}% pool fee (FPPS-style expected value, no luck variance), $${k}/kWh, power at spec wall draw, 30.44-day month, start date ${D.start}, purchase ${$(cost,0)}/miner (${$(capex,0)} total).<br>
+ <b>History is an ESTIMATE</b> from daily network data, not pool payouts: each day = fleet hashrate ÷ (that day's difficulty × 2³²) × 86,400 × that day's average block reward (subsidy + fees) × (1 − pool fee), valued at that day's BTC price. Share your pool account or payout history to swap in actuals.<br>Sources: ${D.srcs.join(' · ')}.`;
+ document.getElementById('sub').textContent=n+' × '+S.model+' · since Sep 1, 2025 · updated '+ts(L.built);}
+async function go(e){e&&e.preventDefault();try{const pw=document.getElementById('pw').value;D=await decrypt(pw);sessionStorage.btcpw=pw;}catch(x){document.getElementById('err').textContent='Wrong password';return;}
+ document.getElementById('gate').remove();document.getElementById('app').style.display='';iN.value=D.n;iK.value=D.kwh;iU.value=D.uptime;iP.value=D.pool;iC.value=D.cost;
+ document.querySelectorAll('.inp input').forEach(i=>i.oninput=calc);calc();}
+if(sessionStorage.btcpw){document.getElementById('pw').value=sessionStorage.btcpw;go();}
+</script><!--SORTABLE-START--><script>
+/* Shared sortable tables (Grok Bot trackers). Click any header: asc/desc toggle with ▲/▼.
+   Works on dynamically rendered tables via event delegation. Totals (tfoot, .total/.ft/.tot rows,
+   or first cell TOTAL/ALL-TIME/GRAND) stay pinned at bottom. Group-label rows (fewer cells / colspan)
+   keep their members: sorting happens within each group. Uses td[data-v] when present.
+   Skip: th with own onclick, th.nosort, or table[data-nosort]. */
+(function(){
+  if(window.__sortableShared)return;window.__sortableShared=1;
+  var st=document.createElement('style');
+  st.textContent='table:not([data-nosort]) th:not(.nosort){cursor:pointer;user-select:none}th .srt-ar{font-size:.8em;opacity:.85;margin-left:3px}';
+  (document.head||document.documentElement).appendChild(st);
+  var MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  function key(cell){
+    if(!cell)return null;
+    var raw=cell.dataset&&cell.dataset.v!=null?cell.dataset.v:cell.textContent;
+    var s=String(raw).replace(/[▲▼]/g,'').trim();
+    if(!s||s==='—'||s==='-'||s==='–'||/^n\/?a$/i.test(s))return null;
+    var m;
+    if((m=s.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?/)))return {n:Date.UTC(+m[1],+m[2]-1,+(m[3]||1))};
+    if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/))){var y=+m[3];if(y<100)y+=2000;return {n:Date.UTC(y,+m[1]-1,+m[2])};}
+    if((m=s.match(/^([A-Za-z]{3})[a-z]*\.? (\d{1,2}),? (\d{4})$/))&&MON[m[1].toLowerCase()])return {n:Date.UTC(+m[3],MON[m[1].toLowerCase()]-1,+m[2])};
+    if((m=s.match(/^([A-Za-z]{3})[a-z]* (\d{4})$/))&&MON[m[1].toLowerCase()])return {n:Date.UTC(+m[2],MON[m[1].toLowerCase()]-1,1)};
+    if((m=s.match(/^Q([1-4]) (\d{4})$/i)))return {n:Date.UTC(+m[2],(+m[1]-1)*3,1)};
+    var t=s.replace(/[$,%x×\s]|USD/gi,'').replace(/^\+/,'').replace(/[−–]/g,'-');
+    var neg=/^\(.*\)$/.test(t);if(neg)t=t.slice(1,-1);
+    var mult=1;if((m=t.match(/^(-?[\d.]+)([KMB])$/i))){t=m[1];mult={k:1e3,m:1e6,b:1e9}[m[2].toLowerCase()];}
+    if(/^-?\d*\.?\d+$/.test(t))return {n:parseFloat(t)*mult*(neg?-1:1)};
+    return {s:s.toLowerCase()};
+  }
+  function pinned(r){
+    if(r.parentElement&&r.parentElement.tagName==='TFOOT')return true;
+    if(/(^|\s)(total|totals|ft|tot|sum|grand|pinned)(\s|$)/i.test(r.className))return true;
+    var c=r.cells[0];return !!c&&/^\s*(TOTAL|TOTALS|ALL-TIME|GRAND TOTAL)\b/i.test(c.textContent);
+  }
+  document.addEventListener('click',function(e){
+    var th=e.target.closest&&e.target.closest('th');if(!th||th.onclick||th.classList.contains('nosort'))return;
+    var tb=th.closest('table');if(!tb||tb.hasAttribute('data-nosort'))return;
+    var hr=th.parentElement;if(hr.parentElement.tagName==='TFOOT')return;
+    var ci=0;for(var k=0;k<hr.cells.length&&hr.cells[k]!==th;k++)ci+=hr.cells[k].colSpan||1;
+    var ncol=0;for(k=0;k<hr.cells.length;k++)ncol+=hr.cells[k].colSpan||1;
+    var dir=th.dataset.sdir==='asc'?'desc':'asc',m=dir==='asc'?1:-1;
+    tb.querySelectorAll('th').forEach(function(x){delete x.dataset.sdir;var a=x.querySelector('.srt-ar');if(a)a.remove();});
+    th.dataset.sdir=dir;var ar=document.createElement('span');ar.className='srt-ar';ar.textContent=dir==='asc'?'▲':'▼';th.appendChild(ar);
+    var bodies=tb.tBodies.length?[].slice.call(tb.tBodies):[tb];
+    bodies.forEach(function(body){
+      var all=[].slice.call(body.rows).filter(function(r){return r!==hr&&!(r.cells.length&&r.cells[0].tagName==='TH'&&!r.querySelector('td'));});
+      var pins=[],groups=[{head:null,rows:[]}];
+      all.forEach(function(r){
+        if(pinned(r)){pins.push(r);return;}
+        var w=0;for(var j=0;j<r.cells.length;j++)w+=r.cells[j].colSpan||1;
+        if(r.cells.length===1&&ncol>1)groups.push({head:r,rows:[]});else groups[groups.length-1].rows.push(r);
+      });
+      function cellAt(r){var x=0;for(var j=0;j<r.cells.length;j++){if(x===ci)return r.cells[j];x+=r.cells[j].colSpan||1;}return null;}
+      groups.forEach(function(g){
+        g.rows.sort(function(a,b){var A=key(cellAt(a)),B=key(cellAt(b));
+          if(!A&&!B)return 0;if(!A)return 1;if(!B)return -1;
+          if(A.n!=null&&B.n!=null)return (A.n-B.n)*m;
+          return String(A.s!=null?A.s:A.n).localeCompare(String(B.s!=null?B.s:B.n),undefined,{numeric:true})*m;});
+        if(g.head)body.appendChild(g.head);g.rows.forEach(function(r){body.appendChild(r);});
+      });
+      pins.forEach(function(r){body.appendChild(r);});
+    });
+  },false);
+})();
+
+</script><!--SORTABLE-END-->
+</body></html>
