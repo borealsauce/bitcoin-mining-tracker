@@ -54,7 +54,6 @@ tr.cur td{background:#e8b92326!important;font-weight:700}
 .cards.top3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.small{font-size:12px;color:var(--muted);line-height:1.6}.small a{color:var(--gold)}
 @media(max-width:600px){.card .v{font-size:22px}.card.hero .v{font-size:28px}th,td{padding:6px 7px;font-size:12px}}
 </style></head><body>
-<div id="gate"><form onsubmit="go(event)"><h1>Bitcoin Mining Tracker</h1><p class="muted">Enter password</p><input id="pw" type="password" autofocus><button>Open</button><div id="err" class="neg"></div></form></div>
 <div class="top"><div class="wrap"><h1>Bitcoin Mining Tracker</h1><div class="muted" id="sub"></div></div></div>
 <div class="wrap" id="app" style="display:none">
 <div class="cards top3" id="top" style="margin-top:16px"></div>
@@ -76,10 +75,6 @@ tr.cur td{background:#e8b92326!important;font-weight:700}
 <h2>Assumptions &amp; Sources</h2><div class="small" id="asm"></div><br></div>
 <script>
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-async function decrypt(pw){const e=await (await fetch('data.enc.json',{cache:'no-store'})).json();
- const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
- const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.salt),iterations:e.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
- return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.iv)},key,b64(e.ct))));}
 const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const $=(v,d=2)=>v==null||!isFinite(v)?'—':(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const B=(v,d=6)=>v==null||!isFinite(v)?'—':v.toFixed(d)+' BTC';const N=(v,d=0)=>isFinite(v)?v.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
@@ -144,10 +139,9 @@ function calc(){
  <b>Assumptions:</b> ${N(up*100)}% uptime, ${N(pf*100,1)}% pool fee (FPPS-style expected value, no luck variance), $${k}/kWh, power at spec wall draw, 30.44-day month, start date ${D.start}, purchase ${$(cost,0)}/miner (${$(capex,0)} total).<br>
  <b>History is an ESTIMATE</b> from daily network data, not pool payouts: each day = fleet hashrate ÷ (that day's difficulty × 2³²) × 86,400 × that day's average block reward (subsidy + fees) × (1 − pool fee), valued at that day's BTC price. Share your pool account or payout history to swap in actuals.<br>Sources: ${D.srcs.join(' · ')}.`;
  document.getElementById('sub').textContent=n+' × '+S.model+' · since Sep 1, 2025 · updated '+ts(L.built);}
-async function go(e){e&&e.preventDefault();try{const pw=document.getElementById('pw').value;D=await decrypt(pw);sessionStorage.btcpw=pw;}catch(x){document.getElementById('err').textContent='Wrong password';return;}
- document.getElementById('gate').remove();document.getElementById('app').style.display='';iN.value=D.n;iK.value=D.kwh;iU.value=D.uptime;iP.value=D.pool;iC.value=D.cost;
- document.querySelectorAll('.inp input').forEach(i=>i.oninput=calc);calc();}
-if(sessionStorage.btcpw){document.getElementById('pw').value=sessionStorage.btcpw;go();}
+(async()=>{D=await (await fetch('data.json',{cache:'no-store'})).json();
+ document.getElementById('app').style.display='';iN.value=D.n;iK.value=D.kwh;iU.value=D.uptime;iP.value=D.pool;iC.value=D.cost;
+ document.querySelectorAll('.inp input').forEach(i=>i.oninput=calc);calc();})();
 </script><!--SORTABLE-START--><script>
 /* Shared sortable tables (Grok Bot trackers). Click any header: asc/desc toggle with ▲/▼.
    Works on dynamically rendered tables via event delegation. Totals (tfoot, .total/.ft/.tot rows,
