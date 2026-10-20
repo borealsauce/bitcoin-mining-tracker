@@ -111,7 +111,7 @@ function calc(){
  const beP=fb>0?el/fb:null,beK=kwhDay*n>0?rev/(kwhDay*n):null,pay=net>0&&cost?capex/(net*30.44):null,remain=net>0?(capex-netMined)/(net*30.44):null;
  const E=D.eq,newP=E.new[0].p,usedP=E.used_sold_avg.p,us=E.used.map(x=>x.p).sort((a,b)=>a-b),med=us.length%2?us[(us.length-1)/2]:(us[us.length/2-1]+us[us.length/2])/2;
  document.getElementById('top').innerHTML=card('Total BTC Mined — at Current Price','<span class="dual"><span>'+$(totNow)+'</span><span>'+B(cb,5)+'</span></span>','× '+$(P,0)+' since '+SD+' <span class="est">EST.</span>','shim','hero')+
-  card('Total Electricity Cost Since Inception',$(ce),N(ck)+' kWh × $'+k.toFixed(3)+'/kWh','neg','hero')+card('Current Total Income (Net)',$(netNow),'BTC at today\'s price − electricity',cls(netNow),'hero');
+  card('Total Electricity Cost Since Inception',$(ce),N(ck)+' kWh × $'+k.toFixed(3)+'/kWh','neg','hero')+card('Current Total Income (Net)',$(netNow-capex),$(totNow,0)+' BTC − '+$(ce,0)+' power − '+$(capex,0)+' machines',cls(netNow-capex),'hero');
  document.getElementById('inc').innerHTML=card('Estimated BTC Mined Since '+SD+'',B(cb,5),'worth '+$(totNow)+' today')+card('Value at Mined-Date Prices',$(cu),'sum of daily BTC × that day\'s price')+
   card('Cumulative Net Profit (mined-date)',$(netMined),'revenue at mined-date prices − electricity',cls(netMined))+card('Capital Recovered',capex?N(netMined/capex*100,1)+'%':'—',$(netMined)+' of '+$(capex,0))+
   card('Months to Full Payback',remain!=null&&remain>0?N(remain,1)+' mo':remain!=null?'Paid back':'Never at current rates','remaining '+$(Math.max(capex-netMined,0),0)+' ÷ current monthly net');
