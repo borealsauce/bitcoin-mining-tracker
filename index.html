@@ -63,7 +63,7 @@ tr.cur td{background:#e8b92326!important;font-weight:700}
 <h2>Inputs</h2><div class="inp">
 <div><label>Miners</label><input id="iN" type="number" min="0" step="1"></div>
 <div><label>$ / kWh</label><input id="iK" type="number" step="0.005"></div>
-<div><label>Uptime %</label><input id="iU" type="number" min="0" max="100" step="1"></div>
+<div><label>Uptime %</label><input id="iU" type="number" min="0" max="100" step="0.1"></div>
 <div><label>Pool fee %</label><input id="iP" type="number" min="0" step="0.5"></div>
 <div><label>BTC price override</label><input id="iB" type="number" placeholder="live"></div>
 <div><label>Cost per miner $</label><input id="iC" type="number" step="50"></div></div>
@@ -164,7 +164,7 @@ function calc(){
  const pr=document.getElementById('inc').querySelectorAll('.card')[4];if(pr)pr.outerHTML=card('Months to Full Payback',rC!=null?N(rC,1)+' mo':'No payback within 10 yrs',rC!=null?pbTxt(rC)+' · halving-aware':'halving ~'+fdt(hvD));
  document.getElementById('asm').innerHTML=`<b>Miner:</b> ${S.model}, ${S.th} TH/s, ${N(S.w)} W, ${S.jth} J/TH.<br>
  <b>Live inputs:</b> BTC ${$(L.price,0)} (${ts(L.price_t)})${+iB.value?' — <b>overridden to '+$(P,0)+'</b>':''} · difficulty ${(L.diff/1e12).toFixed(2)}T (last adj. ${ts(L.diff_t)}) · network ${N(L.net_hash_ehs,0)} EH/s · subsidy ${L.subsidy} BTC + avg fees ${L.fee_blk.toFixed(4)} BTC/block (${L.fee_range}). Built ${ts(L.built)}.<br>
- <b>Assumptions:</b> ${N(up*100)}% uptime, ${N(pf*100,1)}% pool fee (FPPS-style expected value, no luck variance), $${k}/kWh, power at spec wall draw, 30.44-day month, start date ${D.start}, purchase ${$(cost,0)}/miner (${$(capex,0)} total).<br>
+ <b>Assumptions:</b> ${N(up*100,1)}% uptime${Math.abs(up*100-D.uptime)<1e-9?' (calibrated to ~0.58 BTC actual since '+SD+')':''}; electricity scales with uptime (powered-off miners draw no power), ${N(pf*100,1)}% pool fee (FPPS-style expected value, no luck variance), $${k}/kWh, power at spec wall draw, 30.44-day month, start date ${D.start}, purchase ${$(cost,0)}/miner (${$(capex,0)} total).<br>
  <b>History is an ESTIMATE</b> from daily network data, not pool payouts: each day = fleet hashrate ÷ (that day's difficulty × 2³²) × 86,400 × that day's average block reward (subsidy + fees) × (1 − pool fee), valued at that day's BTC price. Share your pool account or payout history to swap in actuals.`;
  document.getElementById('sub').textContent=n+' × '+S.model+' · since '+SD+' · updated '+ts(L.built);}
 (async()=>{D=await (await fetch('data.json',{cache:'no-store'})).json();
